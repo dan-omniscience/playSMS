@@ -37,6 +37,13 @@ if (_APP_) {
 		case 'ws':
 		case 'webservice':
 		case 'webservices':
+			// If a plugin with a webservices is installed use the plugin webservices file
+			if (_CAT_ && _PLUGIN_) {
+				$plugin_fn = $core_config['apps_path']['plug'] . '/'. _CAT_ . '/' . _PLUGIN_ . '/webservices.php';
+				if (file_exists($plugin_fn)) {
+					include $plugin_fn;
+				}
+			}
 			// _APP_=webservices to access webservices, replacement of input.php and output.php
 			$fn = $core_config['apps_path']['incs'] . '/app/webservices.php';
 			if (file_exists($fn)) {
@@ -48,7 +55,7 @@ if (_APP_) {
 			// can be used to replace callback.php in clickatell or dlr.php and geturl.php in kannel
 			if (_CAT_ && _PLUGIN_) {
 				core_hook(_PLUGIN_, 'call', array(
-					$_REQUEST 
+					$_REQUEST
 				));
 			}
 			break;
