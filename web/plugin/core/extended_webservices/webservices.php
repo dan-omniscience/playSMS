@@ -117,10 +117,11 @@ if (_OP_) {
 			break;
 		case 'GET_DEFAULT_SENDER_ID':
 			if(function_exists('sender_id_default_get')){
-				$default_sender_id = sender_id_default_get();
-				var_dump($default_sender_id);
+				$uid = user_username2uid($u);
+				$default_sender_id = sender_id_default_get($uid);
+				$json['status'] = 'OK';
+				$json['sender_id'] = $default_sender_id;
 			}
-			exit();
 			break;
 		case 'ADD_SENDER_ID':
 			if(function_exists('sender_id_add')){
