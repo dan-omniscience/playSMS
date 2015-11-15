@@ -129,23 +129,15 @@ if (_OP_) {
 				if($sender_id = core_query_sanitize($_REQUEST['sender_id'])){
 					$sender_id_desc = core_query_sanitize($_REQUEST['desc']);
 					$isDefault = core_query_sanitize($_REQUEST['default']);
-					if($isDefault == ''){
+					if(!$isDefault == ''){
 						$isDefault = 0;
 					}
-					$isApproved = core_query_sanitize($_REQUEST['approved']);
-					if($isApproved == ''){
-						$isApproved = 0;
-					}
-					//sender_id_add($uid, $sender_id, $sender_id_description = '', $isdefault = 1, $isapproved = 1, $ws = false)
-					$addResult = sender_id_add($uid, $sender_id, $sender_id_desc, $isDefault, $isApproved, true);
-					$status = ($addResult) ? 'OK' : 'ERR';
+					$isapproved = 1;
+					//sender_id_add($uid, $sender_id, $sender_id_description = '', $isdefault = 1, $isapproved = 1)
+					$status = (sender_id_add($uid, $sender_id, $sender_id_desc, $isDefault, $isapproved)) ? 'OK' : 'ERR';
+					$json['status'] = $status;
 					if($status === 'ERR'){
-						$json['status'] = 'ERR';
 						$json['error'] = '627';
-					}
-					else{
-						$json['status'] = 'OK';
-						$json['data'] = array('sender_id' => $sender_id, 'desc' => $sender_id_desc, 'isDefault' => $isDefault, 'isApproved' => $isApproved);
 					}
 				}
 			}
