@@ -7,7 +7,7 @@ function sender_id_api_hook_webservices_output($operation, $requests, $returns) 
 	$h = $requests['h'];
 
 	$ws_error_string = array(
-		// '100' => 'authentication failed',
+		'100' => 'authentication failed',
 		// '101' => 'type of action is invalid or unknown',
 		// '102' => 'one or more field empty',
 		// '103' => 'not enough credit for this operation',
@@ -53,68 +53,88 @@ function sender_id_api_hook_webservices_output($operation, $requests, $returns) 
 
 	switch (strtoupper($operation)){
 		case 'GET_SENDER_IDS':
-			if(function_exists('sender_id_getall')){
-				$sender_ids = sender_id_getall($u);
-				$json['status'] = 'OK';
-				$json['sender_ids'] = $sender_ids;
+			if ($u = webservices_validate($h, $u)) {
+				if(function_exists('sender_id_getall')){
+					$sender_ids = sender_id_getall($u);
+					$json['status'] = 'OK';
+					$json['sender_ids'] = $sender_ids;
+				}
+			} else {
+				$json['status'] = 'ERR';
+				$json['error'] = '100';
 			}
 			break;
 		case 'GET_DEFAULT_SENDER_ID':
-			if(function_exists('sender_id_default_get')){
-				$uid = user_username2uid($u);
-				$default_sender_id = sender_id_default_get($uid);
-				$json['status'] = 'OK';
-				$json['sender_id'] = $default_sender_id;
+			if ($u = webservices_validate($h, $u)) {
+				if(function_exists('sender_id_default_get')){
+					$uid = user_username2uid($u);
+					$default_sender_id = sender_id_default_get($uid);
+					$json['status'] = 'OK';
+					$json['sender_id'] = $default_sender_id;
+				}
+			} else {
+				$json['status'] = 'ERR';
+				$json['error'] = '100';
 			}
 			break;
 		case 'ADD_SENDER_ID':
-			if(function_exists('sender_id_api_add')){
-				$uid = user_username2uid($u);
-				if($sender_id = core_query_sanitize($requests['sender_id'])){
-					$sender_id_desc = core_query_sanitize($requests['desc']);
-					$isDefault = core_query_sanitize($requests['default']);
-					if($isDefault == ''){
-						$isDefault = 0;
-					}
-					$isApproved = core_query_sanitize($requests['approved']);
-					if($isApproved == ''){
-						$isApproved = 0;
-					}
-					//sender_id_add($uid, $sender_id, $sender_id_description = '', $isdefault = 1, $isapproved = 1, $ws = false)
-					$addResult = sender_id_api_add($uid, $sender_id, $sender_id_desc, $isDefault, $isApproved, true);
-					$status = ($addResult) ? 'OK' : 'ERR';
-					if($status === 'ERR'){
-						$json['status'] = 'ERR';
-						$json['error'] = '627';
-					}
-					else{
-						$json['status'] = 'OK';
-						$json['data'] = array('sender_id' => $sender_id, 'desc' => $sender_id_desc, 'isDefault' => $isDefault, 'isApproved' => $isApproved);
+			if ($u = webservices_validate($h, $u)) {
+				if(function_exists('sender_id_api_add')){
+					$uid = user_username2uid($u);
+					if($sender_id = core_query_sanitize($requests['sender_id'])){
+						$sender_id_desc = core_query_sanitize($requests['desc']);
+						$isDefault = core_query_sanitize($requests['default']);
+						if($isDefault == ''){
+							$isDefault = 0;
+						}
+						$isApproved = core_query_sanitize($requests['approved']);
+						if($isApproved == ''){
+							$isApproved = 0;
+						}
+						//sender_id_add($uid, $sender_id, $sender_id_description = '', $isdefault = 1, $isapproved = 1, $ws = false)
+						$addResult = sender_id_api_add($uid, $sender_id, $sender_id_desc, $isDefault, $isApproved, true);
+						$status = ($addResult) ? 'OK' : 'ERR';
+						if($status === 'ERR'){
+							$json['status'] = 'ERR';
+							$json['error'] = '627';
+						}
+						else{
+							$json['status'] = 'OK';
+							$json['data'] = array('sender_id' => $sender_id, 'desc' => $sender_id_desc, 'isDefault' => $isDefault, 'isApproved' => $isApproved);
+						}
 					}
 				}
+			} else {
+				$json['status'] = 'ERR';
+				$json['error'] = '100';
 			}
 			break;
 
 		case 'UPDATE_SENDER_ID':
-			if(function_exists('sender_id_api_update')){
-				$uid = user_username2uid($u);
-				if($sender_id = core_query_sanitize($requests['sender_id'])){
-					$sender_id_desc = core_query_sanitize($requests['desc']);
-					$isDefault = core_query_sanitize($requests['default']);
-					if(!$isDefault == ''){
-						$isDefault = '_';
-					}
-					$isapproved = core_query_sanitize($requests['approved']);
-					if($isapproved == ''){
-						$isapproved = '_';
-					}
-					//sender_id_add($uid, $sender_id, $sender_id_description = '', $isdefault = 1, $isapproved = 1)
-					$status = (sender_id_api_update($uid, $sender_id, $sender_id_desc, $isDefault, $isapproved, true)) ? 'OK' : 'ERR';
-					$json['status'] = $status;
-					if($status === 'ERR'){
-						$json['error'] = '628';
+			if ($u = webservices_validate($h, $u)) {
+				if(function_exists('sender_id_api_update')){
+					$uid = user_username2uid($u);
+					if($sender_id = core_query_sanitize($requests['sender_id'])){
+						$sender_id_desc = core_query_sanitize($requests['desc']);
+						$isDefault = core_query_sanitize($requests['default']);
+						if(!$isDefault == ''){
+							$isDefault = '_';
+						}
+						$isapproved = core_query_sanitize($requests['approved']);
+						if($isapproved == ''){
+							$isapproved = '_';
+						}
+						//sender_id_add($uid, $sender_id, $sender_id_description = '', $isdefault = 1, $isapproved = 1)
+						$status = (sender_id_api_update($uid, $sender_id, $sender_id_desc, $isDefault, $isapproved, true)) ? 'OK' : 'ERR';
+						$json['status'] = $status;
+						if($status === 'ERR'){
+							$json['error'] = '628';
+						}
 					}
 				}
+			} else {
+				$json['status'] = 'ERR';
+				$json['error'] = '100';
 			}
 			break;
 		default :
