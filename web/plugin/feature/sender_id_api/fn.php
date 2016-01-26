@@ -49,6 +49,7 @@ function sender_id_api_hook_webservices_output($operation, $requests, $returns) 
 		// '626' => 'fail to set login key',
 		'627' => 'failed to add new sender id',
 		'628' => 'failed to update sender id',
+		'629' => 'duplicate sender id',
 	);
 
 	switch (strtoupper($operation)){
@@ -93,10 +94,10 @@ function sender_id_api_hook_webservices_output($operation, $requests, $returns) 
 						}
 						//sender_id_add($uid, $sender_id, $sender_id_description = '', $isdefault = 1, $isapproved = 1, $ws = false)
 						$addResult = sender_id_api_add($uid, $sender_id, $sender_id_desc, $isDefault, $isApproved, true);
-						$status = ($addResult) ? 'OK' : 'ERR';
+						$status = ($addResult[0]) ? 'OK' : 'ERR';
 						if($status === 'ERR'){
 							$json['status'] = 'ERR';
-							$json['error'] = '627';
+							$json['error'] = $addResult[1];
 						}
 						else{
 							$json['status'] = 'OK';
@@ -171,7 +172,7 @@ function sender_id_api_add($uid, $sender_id, $sender_id_description = '', $isdef
 	if (sender_id_check($uid, $sender_id)) {
 
 		// not available
-		return FALSE;
+		return array(FALSE, '629');
 	} else {
 		$default = ((auth_isadmin() || $ws) ? (int) $isdefault : 0);
 		$approved = ((auth_isadmin() || $ws) ? (int) $isapproved : 0);
@@ -192,9 +193,8 @@ function sender_id_api_add($uid, $sender_id, $sender_id_description = '', $isdef
 		} else {
 
 			// unknown error
-			return FALSE;
+			return array(FALSE, '627');
 		}
-
 		if ($ret[$sender_id]) {
 			_log('sender ID has been added id:' . $sender_id . ' uid:' . $uid, 2, 'sender_id_add');
 		} else {
