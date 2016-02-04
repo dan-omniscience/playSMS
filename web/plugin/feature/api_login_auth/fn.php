@@ -11,9 +11,9 @@ function api_login_auth_hook_webservices_output($operation, $requests, $returns)
 		// '101' => 'type of action is invalid or unknown',
 		// '102' => 'one or more field empty',
 		// '103' => 'not enough credit for this operation',
-		// '104' => 'webservice token is not available',
-		// '105' => 'webservice token not enable for this user',
-		// '106' => 'webservice token not allowed from this IP address',
+		'104' => 'webservice token is not available',
+		'105' => 'webservice token not enable for this user',
+		'106' => 'webservice token not allowed from this IP address',
 		// '200' => 'send message failed',
 		// '201' => 'destination number or message is empty',
 		// '400' => 'no delivery status available',
@@ -47,8 +47,6 @@ function api_login_auth_hook_webservices_output($operation, $requests, $returns)
 		// '624' => 'fail to deduct credit',
 		// '625' => 'setting login key failed due to missing data',
 		// '626' => 'fail to set login key',
-		'627' => 'failed to add new sender id',
-		'628' => 'failed to update sender id',
 	);
 
 	switch (strtoupper($operation)){
