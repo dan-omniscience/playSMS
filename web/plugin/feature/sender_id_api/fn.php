@@ -199,8 +199,7 @@ function sender_id_api_add($uid, $sender_id, $sender_id_description = '', $isdef
 			_log('sender ID has been added id:' . $sender_id . ' uid:' . $uid, 2, 'sender_id_add');
 		} else {
 			_log('fail to add sender ID id:' . $sender_id . ' uid:' . $uid, 2, 'sender_id_add');
-
-			return FALSE;
+			return array(FALSE, '627');
 		}
 
 		// if default and approved
@@ -218,7 +217,7 @@ function sender_id_api_add($uid, $sender_id, $sender_id_description = '', $isdef
 		}
 
 		// added
-		return TRUE;
+		return array(TRUE);
 	}
 }
 
